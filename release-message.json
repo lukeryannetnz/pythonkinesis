@@ -1,0 +1,12 @@
+{
+    "releaseId": "$id",
+    "title": "$title",
+    "owner": "$owner",
+    "productId": "$productId",
+    "statusId": "$statusId",
+    "outcomeId": null,
+    "typeId": "$typeId",
+    "jiraLink": "$jiraLink",
+    "plannedDateTimeUTC": "$date",
+    "notes": null
+}

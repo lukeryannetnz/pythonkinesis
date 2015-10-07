@@ -14,7 +14,9 @@ def list_streams(kinesis):
 		print(stream)
 
 def create_new_release_message():
-	template = string.Template('{"releaseId": "$id", "title": "$title", "owner": "$owner", "productId": "$productId", "statusId": "$statusId", "outcomeId": null, "typeId": "$typeId", "jiraLink": "$jiraLink", "plannedDateTimeUTC": "$date", "notes": null}')
+	with open ("./release-message.json", "r") as releaseTemplateFile:
+		template = releaseTemplateFile.read().replace('\n', '')
+	template = string.Template(template);
 	message = template.substitute(id = uuid.uuid4(), title= 'a new release!', owner = 'luke', productId = uuid.uuid4(), statusId = uuid.uuid4(), typeId = uuid.uuid4(), jiraLink = 'http://jira.com/coolstuff', date = datetime.datetime.utcnow())
 	return message
 
@@ -39,9 +41,9 @@ def pull_messages(kinesis):
 			time.sleep(1)
 			response = kinesis.get_records(shard_iterator)
 			for record in response['Records']:
-		                if 'Data' in record:
-		                    print('', num_collected, record['Data'])
-		                    num_collected += 1
+						if 'Data' in record:
+							print('', num_collected, record['Data'])
+							num_collected += 1
 			shard_iterator = response['NextShardIterator']
 			#print(response)
 	print('Messages retrieved: ', num_collected)
