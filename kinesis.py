@@ -20,10 +20,20 @@ def create_new_release_message():
 	message = template.substitute(id = uuid.uuid4(), title= 'a new release!', owner = 'luke', productId = uuid.uuid4(), statusId = uuid.uuid4(), typeId = uuid.uuid4(), jiraLink = 'http://jira.com/coolstuff', date = datetime.datetime.utcnow())
 	return message
 
+def create_new_deployment_message():
+	with open ("./deployment-message.json", "r") as deploymentTemplateFile:
+		template = deploymentTemplateFile.read().replace('\n', '')
+	template = string.Template(template);
+	message = template.substitute(id = uuid.uuid4(), artifactName = 'MXWeb', version = '1.0.0.0', fullArtifact = 'XeroWeb-CI-v10.2.6.299.zip', userName = 'dev-luker', host = 'S1INTAPP02', date = datetime.datetime.utcnow())
+	return message
+
 def push_messages(kinesis):
 	data = create_new_release_message()
 	kinesis.put_record(streamName, data, '1')
-	print('pushed a message to stream ', streamName)
+
+	data = create_new_deployment_message()
+	kinesis.put_record(streamName, data, '1')
+	print('pushed 2 messages to stream ', streamName)
 
 def pull_messages(kinesis):
 	response = kinesis.describe_stream(streamName)

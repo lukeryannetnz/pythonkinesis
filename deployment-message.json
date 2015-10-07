@@ -1,0 +1,9 @@
+{
+	"id" : "$id",
+	"artifactName" : "$artifactName",
+	"version" : "$version",
+	"fullArtifact" : "$fullArtifact",
+	"userName" : "$userName",
+	"host" : "$host",
+	"dateTimeUTC" : "$date"
+}
