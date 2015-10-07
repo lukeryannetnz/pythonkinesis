@@ -1,6 +1,9 @@
 import boto
 import boto.kinesis
 import time
+import datetime
+import uuid
+import string
 
 streamName = 'deployment'
 kinesis = boto.kinesis.connect_to_region('us-west-2')
@@ -10,12 +13,13 @@ def list_streams(kinesis):
 	for stream in streams['StreamNames']:
 		print(stream)
 
-def push_message(kinesis):
-	data = 'Some data ... ' + time.strftime("%c")
-	record = {
-            	'Data': data,
-            	'PartitionKey': data,
-        	}
+def create_new_release_message():
+	template = string.Template('{"releaseId": "$id", "title": "$title", "owner": "$owner", "productId": "$productId", "statusId": "$statusId", "outcomeId": null, "typeId": "$typeId", "jiraLink": "$jiraLink", "plannedDateTimeUTC": "$date", "notes": null}')
+	message = template.substitute(id = uuid.uuid4(), title= 'a new release!', owner = 'luke', productId = uuid.uuid4(), statusId = uuid.uuid4(), typeId = uuid.uuid4(), jiraLink = 'http://jira.com/coolstuff', date = datetime.datetime.utcnow())
+	return message
+
+def push_messages(kinesis):
+	data = create_new_release_message()
 	kinesis.put_record(streamName, data, '1')
 	print('pushed a message to stream ', streamName)
 
@@ -43,5 +47,5 @@ def pull_messages(kinesis):
 	print('Messages retrieved: ', num_collected)
 
 list_streams(kinesis)
-push_message(kinesis)
+push_messages(kinesis)
 pull_messages(kinesis)
